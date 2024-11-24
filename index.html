@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Weather App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            /* background: linear-gradient(45deg, #4facfe, #00f2fe); */
+            background-image: url(weather.jpg);
+            color: #333;
+            overflow: hidden;
+            animation: gradient 20s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(60, 71, 101, 0.9);
+            border-radius: 10px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+            color: #fff;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            transition: border 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border: 1px solid #66b4f9;
+            outline: none;
+            box-shadow: 0 0 8px rgba(102, 180, 249, 0.5);
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #66b4f9;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s ease, background 0.3s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:hover {
+            background-color: #00c6ff;
+        }
+
+        #result, #icon {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #fff;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        #icon img {
+            margin-top: 15px;
+            width: 100px;
+            animation: icon-bounce 1.5s infinite;
+        }
+
+        @keyframes icon-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Weather App</h1>
+        <label for="cityName">City Name:</label>
+        <input type="text" id="cityName" placeholder="Enter city name">
+        <button onclick="getWeather()">Submit</button>
+
+        
+        <div id="loader"></div>
+
+        <div id="result"></div>
+        <div id="icon"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        function getWeather() {
+            let city = document.querySelector("#cityName").value;
+            let API_key = "0962711cc22a585649474957022e2dc3";
+            let resultElement = document.querySelector("#result");
+            let iconElement = document.querySelector("#icon");
+           
+
+            axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_key}&units=metric`)
+                .then(function (response) {
+                    loader.style.display = 'none';
+                    document.querySelector("#icon").innerHTML = `<img src="https://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png" alt="Weather Icon">`;
+                    resultElement.innerHTML = `The weather in ${city} is ${response.data.main.temp} °C with ${response.data.weather[0].description}.`;
+
+                })
+                .catch(function (error) {
+                    loader.style.display = 'none';
+                    resultElement.innerHTML = `City not found. Please try again.`;
+                    console.log(error.message);
+                });
+        }
+    </script>
+</body>
+</html>
